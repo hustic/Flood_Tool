@@ -26,15 +26,11 @@ def get_flood_cost(postcodes,probability_bands):
     return cost_value
 
 def get_sorted_flood_probability(postcodes):
-    replace_data = test_data['Probability Band'].replace('High',4)
-    replace_data = replace_data.replace('Medium',3)
-    replace_data = replace_data.replace('Low',2)    
-    replace_data = replace_data.replace('Very Low',1)   
-    replace_data = replace_data.replace('Zero',0)
+    replace_data = test_data['Probability Band'].replace(['High','Medium','Low','Very Low','Zero'],[4,3,2,1,0])
     test_data['replace_data'] = replace_data
-    descending_pb= test_data.sort_values(by = ['replace_data', 'Postcode'],ascending = False)
-    
-    
+    updated = test_data.sort_values(by = ['replace_data','Postcode'],ascending = (False,True))
+    updated = updated.set_index('Postcode')    
+    return updated(['Probability Band'])
     
     
     
