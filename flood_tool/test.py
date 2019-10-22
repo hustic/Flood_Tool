@@ -3,7 +3,11 @@ import numpy as np
 import pandas as pd
 import geo
 from scipy.spatial import distance
+import geo
+from tool import Tool
 
+tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
+'''
 def get_annual_flood_risk(postcodes, probability_bands):
     probs = {'Very Low':1/1000, 'Low':1/100, 'Medium': 1/50, 'High':1/10, 'Zero':0}
     return [probs[p] for p in probability_bands]
@@ -56,7 +60,7 @@ print(dfp.head())
 
         #print(row['Total Value'])
 #print(dfp[dfc['Postcode', 2]])
-
+'''
 
 #print(dfp.head())
 #print(dff.head())

@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
+import geo
 
 __all__ = ['Tool']
 
@@ -24,24 +25,26 @@ class Tool(object):
             Filename of a .csv file containing property value data for postcodes.
         """
         self.dfp = pd.read_csv(postcode_file)
-        dff = pd.read_csv(risk_file)
+        self.dff = pd.read_csv(risk_file)
         dfc = pd.read_csv(values_file)
 
-        easting, northing = geo.get_easting_nothing_from_lat_long(dfp.loc[:, 'Latitude'], dfp.loc[:, 'Longitude'])
+        easting, northing = geo.get_easting_northing_from_lat_long(self.dfp.loc[:, 'Latitude'], self.dfp.loc[:, 'Longitude'])
         self.dfp['Easting'] = easting
         self.dfp['Northing'] = northing
-        self.dfp = pd.merge(dfp, dfc[['Postcode', 'Total Value']], on='Postcode')
+        self.dfp = pd.merge(self.dfp, dfc[['Postcode', 'Total Value']], on='Postcode')
 
-        dff['Numerical Risk'] = dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
-        dff = dff.sort_values(by=['Numerical Risk'], ascending=True)
-        self.dfp['Probability Band'] = 'Zero'
+        self.dff['Numerical Risk'] = self.dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
+        self.dff = self.dff.sort_values(by=['Numerical Risk'], ascending=True)
+        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability_band(easting, northing)
 
-        for index, row in dff.iterrows():
-            dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((dfp['Easting'], dfp['Northing'])).T)
-            points = np.where(dist < row['radius'] * 1000)
+        #self.dfp['Probability Band'] = 'Zero'
 
-            if points:
-                self.dfp.loc[points[1], 'Probability Band'] = row['prob_4band']
+        #for index, row in dff.iterrows():
+        #    dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((self.dfp['Easting'], self.dfp['Northing'])).T)
+        #    points = np.where(dist < row['radius'] * 1000)
+
+        #    if points:
+        #        self.dfp.loc[points[1], 'Probability Band'] = row['prob_4band']
 
 
     def get_lat_long(self, postcodes):
@@ -60,8 +63,11 @@ class Tool(object):
             Array of Nx2 (latitude, longitdue) pairs for the input postcodes.
             Invalid postcodes return [`numpy.nan`, `numpy.nan`].
         """
-
-        raise NotImplementedError
+        fp_data = self.dfp.loc[(self.dfp['Postcode'].isin(postcodes))]
+        fp_data = fp_data.set_index('Postcode')
+        fp_data = fp_data.reindex(index = postcodes)
+        fp_data = fp_data.reset_index()
+        return np.vstack((fp_data['Latitude'], fp_data['Longitude']))
 
 
     def get_easting_northing_flood_probability_band(self, easting, northing):
@@ -85,7 +91,16 @@ class Tool(object):
         numpy.ndarray of strs
             numpy array of flood probability bands corresponding to input locations.
         """
-        raise NotImplementedError
+        res = np.full((1, len(easting)), 'Zero')
+        for index, row in self.dff.iterrows():
+            dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((easting, northing)).T)
+            points = np.where(dist < row['radius'] * 1000)
+
+            if points:
+                res[points[1]] = row['prob_4band']
+
+        return res
+
 
 
     def get_sorted_flood_probability(self, postcodes):
@@ -109,7 +124,16 @@ class Tool(object):
             data column is named `Probability Band`. Invalid postcodes and duplicates
             are removed.
         """
-        raise NotImplementedError
+        a = postcodes
+        fp_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
+        fp_data = fp_data.set_index('Postcode')
+        fp_data = fp_data.reindex(index = a)
+        fp_data = fp_data.reset_index()
+        replace_data = fp_data['Probability Band'].replace(['High','Medium','Low','Very Low','Zero'],[4,3,2,1,0])
+        fp_data['replace_data'] = replace_data
+        updated = fp_data.sort_values(by = ['replace_data','Postcode'],ascending = (False,True))
+        updated = updated.set_index('Postcode')
+        return updated(['Probability Band'])
 
 
     def get_flood_cost(self, postcodes, probability_bands):
@@ -129,8 +153,15 @@ class Tool(object):
             array of floats for the pound sterling cost for the input postcodes.
             Invalid postcodes return `numpy.nan`.
         """
-        raise NotImplementedError
 
+        a = postcodes
+        total_value_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
+        total_value_data = total_value_data.set_index('Postcode')
+        total_value_data = total_value_data.reindex(index = a)
+        total_value_data = total_value_data.reset_index()
+        total_value_data = total_value_data.fillna(0)
+        cost_value = np.array(total_value_data['Total Value'])*0.05
+        return cost_value
 
     def get_annual_flood_risk(self, postcodes, probability_bands):
         """Get an array of estimated annual flood risk in pounds sterling per year of a flood
@@ -151,7 +182,8 @@ class Tool(object):
             array of floats for the annual flood risk in pounds sterling for the input postcodes.
             Invalid postcodes return `numpy.nan`.
         """
-        raise NotImplementedError
+        probs = {'Very Low':1/1000, 'Low':1/100, 'Medium':1/50, 'High':1/10, 'Zero':0}
+        return [probs[p] for p in probability_bands]
 
     def get_sorted_annual_flood_risk(self, postcodes):
         """Get a sorted pandas DataFrame of flood risks.
@@ -171,4 +203,13 @@ class Tool(object):
             `Postcode` and the data column `Flood Risk`.
             Invalid postcodes and duplicates are removed.
         """
-        raise NotImplementedError
+        a = postcodes
+        fp_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
+        fp_data = fp_data.set_index('Postcode')
+        fp_data = fp_data.reindex(index = a)
+        fp_data = fp_data.reset_index()
+        replace_data = fp_data['Probability Band'].replace(['High','Medium','Low','Very Low','Zero'],[4,3,2,1,0])
+        fp_data['replace_data'] = replace_data
+        updated = fp_data.sort_values(by = ['replace_data','Postcode'],ascending = (False,True))
+        updated = updated.set_index('Postcode')
+        return updated(['Probability Band'])

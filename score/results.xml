@@ -1,6 +1,137 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="1" failures="0" hostname="lilin" name="pytest" skipped="0" tests="1" time="0.092" timestamp="2019-10-21T11:00:31.828526"><testcase classname="" file="test.py" name="test" time="0.000"><error message="collection failure">ImportError while importing test module &apos;/home/hustic/uni/group-project-1/acse-4-flood-tool-jordan/score/test.py&apos;.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-score/test.py:6: in &lt;module&gt;
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="8" failures="0" hostname="lilin" name="pytest" skipped="0" tests="8" time="0.535" timestamp="2019-10-22T17:02:13.523682"><testcase classname="test" file="test.py" line="35" name="test_get_easting_northing_from_lat_long" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
     import pandas as pd
-E   ModuleNotFoundError: No module named &apos;pandas&apos;</error></testcase></testsuite></testsuites>
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="89" name="test_tool" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="94" name="test_get_lat_long" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="125" name="test_get_easting_northing_flood_probability" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="157" name="test_get_sorted_flood_probability" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="185" name="test_get_flood_cost" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="215" name="test_get_annual_flood_risk" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase><testcase classname="test" file="test.py" line="245" name="test_get_sorted_annual_flood_risk" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+    def flood_tool():
+&gt;       import flood_tool
+
+score/test.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flood_tool/__init__.py:2: in &lt;module&gt;
+    from .tool import *
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    &quot;&quot;&quot;Locator functions to interact with geographic data&quot;&quot;&quot;
+    import numpy as np
+    import pandas as pd
+    from scipy.spatial import distance
+&gt;   import geo
+E   ModuleNotFoundError: No module named &apos;geo&apos;
+
+flood_tool/tool.py:5: ModuleNotFoundError</error></testcase></testsuite></testsuites>

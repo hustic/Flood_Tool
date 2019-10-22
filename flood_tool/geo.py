@@ -166,7 +166,7 @@ def WGS84toOSGB36(latitude, longitude, radians=False):
     """ Wrapper to transform (latitude, longitude) pairs
     from GPS to OS datum."""
 
-    raise NotImplementedError    
+    return get_easting_northing_from_lat_long(latitude, longitude, radians=radians)
 
 
 def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
@@ -195,7 +195,7 @@ def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
     A guide to coordinate systems in Great Britain
     (https://webarchive.nationalarchives.gov.uk/20081023180830/http://www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents/index.html)
     """
-    if not radians:
+    if radians:
         latitude = rad(latitude)
         longitude = rad(longitude)
 
