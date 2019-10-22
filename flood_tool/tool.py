@@ -35,16 +35,18 @@ class Tool(object):
 
         self.dff['Numerical Risk'] = self.dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
         self.dff = self.dff.sort_values(by=['Numerical Risk'], ascending=True)
-        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability_band(easting, northing)
+        print(len(self.dfp))
+        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
 
         #self.dfp['Probability Band'] = 'Zero'
 
-        #for index, row in dff.iterrows():
-        #    dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((self.dfp['Easting'], self.dfp['Northing'])).T)
-        #    points = np.where(dist < row['radius'] * 1000)
+        #for index, row in self.dff.iterrows():
+            #print(len(row))
+            #dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((self.dfp['Easting'], self.dfp['Northing'])).T)
+            #points = np.where(dist < row['radius'] * 1000)
 
-        #    if points:
-        #        self.dfp.loc[points[1], 'Probability Band'] = row['prob_4band']
+            #if points:
+             #   self.dfp.loc[points[1], 'Probability Band'] = row['prob_4band']
 
 
     def get_lat_long(self, postcodes):
@@ -70,7 +72,7 @@ class Tool(object):
         return np.vstack((fp_data['Latitude'], fp_data['Longitude']))
 
 
-    def get_easting_northing_flood_probability_band(self, easting, northing):
+    def get_easting_northing_flood_probability(self, easting, northing):
         """Get an array of flood risk probabilities from arrays of eastings and northings.
 
         Flood risk data is extracted from the Tool flood risk file. Locations
@@ -83,7 +85,7 @@ class Tool(object):
         easting: numpy.ndarray of floats
             OS Eastings of locations of interest
         northing: numpy.ndarray of floats
-            Ordered sequence of postcodes
+            OS Northings of locations of interest
 
         Returns
         -------
@@ -91,7 +93,10 @@ class Tool(object):
         numpy.ndarray of strs
             numpy array of flood probability bands corresponding to input locations.
         """
-        res = np.full((1, len(easting)), 'Zero')
+        res = np.full((len(easting)), 'Zero')
+        print(res)
+        print(len(easting))
+        print(len(res))
         for index, row in self.dff.iterrows():
             dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((easting, northing)).T)
             points = np.where(dist < row['radius'] * 1000)
@@ -136,7 +141,7 @@ class Tool(object):
         return updated(['Probability Band'])
 
 
-    def get_flood_cost(self, postcodes, probability_bands):
+    def get_flood_cost(self, postcodes):
         """Get an array of estimated cost of a flood event from a sequence of postcodes.
         Parameters
         ----------

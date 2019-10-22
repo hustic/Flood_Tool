@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="8" failures="0" hostname="lilin" name="pytest" skipped="0" tests="8" time="0.535" timestamp="2019-10-22T17:02:13.523682"><testcase classname="test" file="test.py" line="35" name="test_get_easting_northing_from_lat_long" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="8" failures="0" hostname="lilin" name="pytest" skipped="0" tests="8" time="0.538" timestamp="2019-10-22T17:57:58.456826"><testcase classname="test" file="test.py" line="35" name="test_get_easting_northing_from_lat_long" time="0.000"><error message="test setup failure">@fixture(scope=&quot;module&quot;)
     def flood_tool():
 &gt;       import flood_tool
 
