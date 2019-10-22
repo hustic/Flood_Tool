@@ -1,4 +1,7 @@
 """Locator functions to interact with geographic data"""
+import numpy as np
+import pandas as pd
+from scipy.spatial import distance
 
 __all__ = ['Tool']
 
@@ -20,7 +23,25 @@ class Tool(object):
         postcode_file : str, optional
             Filename of a .csv file containing property value data for postcodes.
         """
-        pass
+        self.dfp = pd.read_csv(postcode_file)
+        dff = pd.read_csv(risk_file)
+        dfc = pd.read_csv(values_file)
+
+        easting, northing = geo.get_easting_nothing_from_lat_long(dfp.loc[:, 'Latitude'], dfp.loc[:, 'Longitude'])
+        self.dfp['Easting'] = easting
+        self.dfp['Northing'] = northing
+        self.dfp = pd.merge(dfp, dfc[['Postcode', 'Total Value']], on='Postcode')
+
+        dff['Numerical Risk'] = dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
+        dff = dff.sort_values(by=['Numerical Risk'], ascending=True)
+        self.dfp['Probability Band'] = 'Zero'
+
+        for index, row in dff.iterrows():
+            dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((dfp['Easting'], dfp['Northing'])).T)
+            points = np.where(dist < row['radius'] * 1000)
+
+            if points:
+                self.dfp.loc[points[1], 'Probability Band'] = row['prob_4band']
 
 
     def get_lat_long(self, postcodes):
