@@ -3,9 +3,10 @@ import numpy as np
 import pandas as pd
 import geo
 from scipy.spatial import distance
-import geo
 from tool import Tool
 
+
+print(geo.get_easting_northing_from_lat_long(51.197065, 1.385194))
 tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
 '''
 def get_annual_flood_risk(postcodes, probability_bands):

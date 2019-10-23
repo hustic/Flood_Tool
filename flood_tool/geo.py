@@ -166,7 +166,10 @@ def WGS84toOSGB36(latitude, longitude, radians=False):
     """ Wrapper to transform (latitude, longitude) pairs
     from GPS to OS datum."""
 
-    return get_easting_northing_from_lat_long(latitude, longitude, radians=radians)
+    xyz = lat_long_to_xyz(latitude, longitude, radians)
+    xyz = WGS84toOSGB36transform(xyz)
+    lat, lon = xyz_to_lat_long(xyz[0], xyz[1], xyz[2], radians)
+    return lat, lon
 
 
 def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
@@ -195,26 +198,29 @@ def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
     A guide to coordinate systems in Great Britain
     (https://webarchive.nationalarchives.gov.uk/20081023180830/http://www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents/index.html)
     """
-    if radians:
+    if not radians:
         latitude = rad(latitude)
         longitude = rad(longitude)
 
-    nu = osgb36.a*osgb36.F_0/sqrt(1-osgb36.e2*sin(latitude)**2)
-    rho = (osgb36.a*osgb36.F_0*(1-osgb36.e2))/(1-osgb36.e2*sin(latitude)**2)**(3/2)
-    heta = sqrt((nu/rho) - 1)
+    latitude, longitude = WGS84toOSGB36(latitude, longitude, True)
+   
+    nu = (osgb36.a*osgb36.F_0)/sqrt((1 - osgb36.e2*sin(latitude)**2))
+    rho = (osgb36.a*osgb36.F_0*(1 - osgb36.e2))/((1 - osgb36.e2*(sin(latitude)**2))**(3/2))
+    heta = (nu/rho) - 1
     n = (osgb36.a - osgb36.b)/(osgb36.a + osgb36.b)
-    M = osgb36.b*osgb36.F_0*((1 + n + (5/4)*n**2 + (5/4)*n**3)*(latitude - osgb36.phi_0) -
-                            (3*n + 3*n**2 + (21/8) * n**3)*sin(latitude - osgb36.phi_0)*cos(latitude - osgb36.phi_0) +
-                            ((15/8)*n**2 + (15/8)*n**3)*sin(2*(latitude - osgb36.phi_0))*cos(2*(latitude - osgb36.phi_0)) -
-                            (35/24)*n**3 * \
-                            sin(3*(latitude - osgb36.phi_0)) * \
-                            cos(3*(latitude - osgb36.phi_0)))
+    M = osgb36.b*osgb36.F_0*((1 + n + (5/4)*(n**2) + (5/4)*(n**3))*(latitude - osgb36.phi_0) -
+                            (3*n + 3*(n**2) + (21/8)*(n**3))*sin(latitude - osgb36.phi_0)*cos(latitude + osgb36.phi_0) +
+                            ((15/8)*(n**2) + (15/8)*(n**3))*sin(2*(latitude - osgb36.phi_0))*cos(2*(latitude + osgb36.phi_0)) -
+                            (35/24)*(n**3)*sin(3*(latitude - osgb36.phi_0))*cos(3*(latitude + osgb36.phi_0)))
+    I = M + osgb36.N_0
+    II = (nu/2)*sin(latitude)*cos(latitude)
+    III = (nu/24)*sin(latitude)*(cos(latitude)**3) * (5 - tan(latitude)**2 + 9*heta)
+    IIIA = (nu/720) * sin(latitude)*(cos(latitude)**5) * (61 - 58*(tan(latitude)**2) + tan(latitude)**4)
+    IV = nu * cos(latitude)
+    V = (nu/6) * (cos(latitude)**3) * ((nu/rho) - tan(latitude)**2)
+    VI = (nu/120)*(cos(latitude)**5) * (5 - 18*(tan(latitude)**2) + tan(latitude)**4 + 14*heta - 58*(tan(latitude)**2)*heta)
 
-    easting = osgb36.E_0 + nu*cos(latitude)*(longitude - osgb36.lam_0) + \
-              ((nu/6)*(cos(latitude))**3)*((nu/rho) - tan(latitude)**2)*(longitude - osgb36.lam_0)**3 +\
-              (nu/120) * cos(latitude)**5 * (5-18*tan(latitude)**2 + tan(latitude)**4 + 14*heta**2 - 58*tan(latitude)**2 * heta**2) * (longitude-osgb36.lam_0)**5
-    northing = (M + osgb36.N_0) + (nu/2)*sin(latitude)*cos(latitude)*(longitude - osgb36.lam_0)**2 +\
-               (nu/24)*sin(latitude)*cos(latitude)**3 * (5 - tan(latitude)**2 + 9*heta**2) * (longitude - osgb36.lam_0)**4 + \
-               (nu/720)*sin(latitude)*cos(latitude)**5 * (61-58*tan(latitude)**2 + tan(latitude)**4) * (longitude - osgb36.lam_0)**6
+    easting = osgb36.E_0 + IV*(longitude - osgb36.lam_0) + V*((longitude - osgb36.lam_0)**3) + VI*((longitude-osgb36.lam_0)**5)
+    northing = I + II*((longitude - osgb36.lam_0)**2) + III * ((longitude - osgb36.lam_0)**4) + IIIA*((longitude - osgb36.lam_0)**6)
 
     return easting, northing
