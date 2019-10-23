@@ -27,7 +27,12 @@ class Tool(object):
         self.dfp = pd.read_csv(postcode_file)
         self.dff = pd.read_csv(risk_file)
         dfc = pd.read_csv(values_file)
+        print((self.dfp.head(10)))
+        self.test = pd.read_csv('./tests/test_data.csv')
 
+        print(self.test)
+        result = self.get_lat_long(self.test.loc[:, 'Postcode'])
+        print(np.where(self.dfp.loc[:,'Postcode'].str.len() > 6 ))
         easting, northing = geo.get_easting_northing_from_lat_long(self.dfp.loc[:, 'Latitude'], self.dfp.loc[:, 'Longitude'])
         self.dfp['Easting'] = easting
         self.dfp['Northing'] = northing
@@ -36,7 +41,7 @@ class Tool(object):
         self.dff['Numerical Risk'] = self.dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
         self.dff = self.dff.sort_values(by=['Numerical Risk'], ascending=True)
         print(len(self.dfp))
-        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
+        #self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
 
         #self.dfp['Probability Band'] = 'Zero'
 
@@ -65,7 +70,7 @@ class Tool(object):
             Array of Nx2 (latitude, longitdue) pairs for the input postcodes.
             Invalid postcodes return [`numpy.nan`, `numpy.nan`].
         """
-        fp_data = self.dfp.loc[(self.dfp['Postcode'].isin(postcodes))]
+        fp_data = self.test.loc[(self.test['Postcode'].isin(postcodes))]
         fp_data = fp_data.set_index('Postcode')
         fp_data = fp_data.reindex(index = postcodes)
         fp_data = fp_data.reset_index()
