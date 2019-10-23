@@ -55,8 +55,31 @@ for i in range(1):
     else:
         station_value = station_data.get('items')[0].get('latestReading').get('value')
         print('Station', station_reference, ':', station_value, 'mm of rain.')
-        if 2 <        station_value < 3:
-            print('Yellow warning, medium risk')
-        elif 3 < station_value:
-            print('Red warning, high risk')
-
+        flood_risk = tool.Tool.get_annual_flood_risk(postcodes)
+        risk = flood_risk[j]
+        if risk == 'Zero':
+            print('No Risk')
+        elif risk == 'Very Low':
+            if station_value < 3:
+                print('No Risk')
+            elif 3 < station_value:
+                print('Yellow Warning, Medium Risk')
+        elif risk == 'Low':
+            if station_value <= 2:
+                print('No Risk')
+            elif 2 < station_value < 3:
+                print('Yellow Warning, Medium Risk')
+            elif 3 <= station_value:
+                print('Yellow Waring, Medium Risk')
+        elif risk == 'Medium':
+            if station_value < 2:
+                print('No Risk')
+            elif 2 < station_value < 3:
+                print('Yellow Warning, Medium Risk')
+            elif 3 <= station_value:
+                print('Red Warning, High Risk')
+        elif risk == 'High':
+            if station_value < 2:
+                print('Yellow Warning, Medium Risk')
+            elif 2 <= station_value:
+                print('Red warning, High Risk')
