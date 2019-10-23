@@ -198,9 +198,9 @@ def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
     A guide to coordinate systems in Great Britain
     (https://webarchive.nationalarchives.gov.uk/20081023180830/http://www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents/index.html)
     """
-    if not radians:
-        latitude = rad(latitude)
-        longitude = rad(longitude)
+    #if not radians:
+    #    latitude = rad(latitude)
+    #    longitude = rad(longitude)
 
     latitude, longitude = WGS84toOSGB36(latitude, longitude, True)
    
