@@ -35,17 +35,13 @@ class Tool(object):
         easting, northing = geo.get_easting_northing_from_lat_long(lat, lon)
         self.dfp['Easting'] = easting
         self.dfp['Northing'] = northing
-        print(self.dfp)
         #print(self.dfp.head(10))
         #print(self.dff.head(10))
         self.dfp = self.dfp.merge(self.dfc[['Postcode', 'Total Value']], how='left', left_on='Postcode', right_on='Postcode').fillna(0)
         self.dff['Numerical Risk'] = self.dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
         self.dff = self.dff.sort_values(by=['Numerical Risk'], ascending=True)
         self.dfp['Postcode'] = self.dfp['Postcode'].apply(lambda x: x[0:3] + " " + x[3:6] if len(x) <= 6 else x)
-        print(self.dfp)
-        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
-        print(self.dfp)
-
+        #self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
 
     def get_lat_long(self, postcodes):
         """Get an array of WGS84 (latitude, longitude) pairs from a list of postcodes.
@@ -63,7 +59,7 @@ class Tool(object):
             Array of Nx2 (latitude, longitdue) pairs for the input postcodes.
             Invalid postcodes return [`numpy.nan`, `numpy.nan`].
         """
-        fp_data = self.test.loc[(self.test['Postcode'].isin(postcodes))]
+        fp_data = self.dfp.loc[(self.dfp['Postcode'].isin(postcodes))]
         fp_data = fp_data.set_index('Postcode')
         fp_data = fp_data.reindex(index = postcodes)
         fp_data = fp_data.reset_index()
