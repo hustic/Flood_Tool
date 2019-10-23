@@ -182,7 +182,10 @@ class Tool(object):
         probs = {'Very Low':1/1000, 'Low':1/100, 'Medium':1/50, 'High':1/10, 'Zero':0}
         flrk = np.zeros(len(postcodes))
         for i in range(len(postcodes)):
-            flrk[i] = probs[probability_bands[i]] * self.dfp.loc[postcodes[i], 'Total Value'] * 0.05
+            if postcodes[i] in self.dfp.Postcode:
+                flrk[i] = probs[probability_bands[i]] * self.dfp.loc[postcodes[i], 'Total Value'] * 0.05
+            else:
+                flrk[i] = np.nan
         return flrk
 
     def get_sorted_annual_flood_risk(self, postcodes):
@@ -208,6 +211,7 @@ class Tool(object):
         fp_data = fp_data.set_index('Postcode')
         fp_data = fp_data.reindex(index = a)
         fp_data = fp_data.reset_index()
+        updated['flood_risk'] = self.get_annual_flood_risk(postcodes)
         updated = fp_data.sort_values(by = ['flood_risk','Postcode'],ascending = (False,True))
         updated = updated.set_index('Postcode')
         return updated(['flood_risk'])
