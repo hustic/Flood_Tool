@@ -4,7 +4,11 @@ import tool
 import geo
 from math import sqrt
 import numpy as np
-
+'''
+Depending on location (postcode's lattitude and longitude), finds stations in proximity and 
+extracts rainfall data in mm. According to risk bands, determines whether a flood
+warning should be issued.
+'''
 #lat_long = tool.Tool.get_lat_long(postcodes)
 #E_N = geo.get_easting_northing_from_lat_long(lat_long[:, 0], lat_long[:, 1])
 E_N = np.array([geo.get_easting_northing_from_lat_long(91.28419, 5.29875)])
