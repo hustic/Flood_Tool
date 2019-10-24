@@ -41,7 +41,8 @@ class Tool(object):
         self.dff['Numerical Risk'] = self.dff['prob_4band'].replace(['High', 'Medium', 'Low', 'Very Low'], [4, 3, 2, 1])
         self.dff = self.dff.sort_values(by=['Numerical Risk'], ascending=True)
         self.dfp['Postcode'] = self.dfp['Postcode'].apply(lambda x: x[0:3] + " " + x[3:6] if len(x) <= 6 else x)
-        #self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
+        self.dfp['Probability Band'] = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
+        print(self.dfp.head(10))
 
     def get_lat_long(self, postcodes):
         """Get an array of WGS84 (latitude, longitude) pairs from a list of postcodes.
@@ -88,13 +89,14 @@ class Tool(object):
             numpy array of flood probability bands corresponding to input locations.
         """
         res = np.full((len(easting)), 'Zero')
-        for _, row in self.dff.iterrows():
-            #print(index)
-            dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((easting, northing)).T)
-            points = np.where(dist < row['radius'])
-
+        c = np.vstack((easting, northing)).T
+        def get_probs(row):
+            dist = distance.cdist(np.array([[row[1], row[2]]]), c)
+            points = np.where(dist <= row['radius'])
             if points:
                 res[points[1]] = row['prob_4band']
+
+        self.dff.apply(get_probs, axis=1)
 
         return res
 
@@ -157,7 +159,7 @@ class Tool(object):
         total_value_data = total_value_data.reindex(index = a)
         total_value_data = total_value_data.reset_index()
         total_value_data = total_value_data.fillna(0)
-        cost_value = np.array(total_value_data['Total Value'])*0.05
+        cost_value = np.array(total_value_data['Total Value'])
         return cost_value
 
     def get_annual_flood_risk(self, postcodes, probability_bands):
@@ -206,12 +208,14 @@ class Tool(object):
             `Postcode` and the data column `Flood Risk`.
             Invalid postcodes and duplicates are removed.
         """
-        a = postcodes
+        a = np.array(postcodes)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
+        fp_data.drop_duplicates()
+        fp_data.fillna(0, inplace=True)
         fp_data = fp_data.set_index('Postcode')
         fp_data = fp_data.reindex(index = a)
         fp_data = fp_data.reset_index()
-        updated['flood_risk'] = self.get_annual_flood_risk(postcodes)
-        updated = fp_data.sort_values(by = ['flood_risk','Postcode'],ascending = (False,True))
+        fp_data['Flood Risk'] = self.get_annual_flood_risk(fp_data.Postcode, self.dfp.loc[fp_data.Postcode, 'Probability Band'])
+        updated = fp_data.sort_values(by = ['Flood Risk','Postcode'],ascending = (False,True))
         updated = updated.set_index('Postcode')
-        return updated(['flood_risk'])
+        return updated(['Flood Risk'])

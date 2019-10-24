@@ -6,11 +6,11 @@ from scipy.spatial import distance
 from tool import Tool
 
 
-#print(geo.get_easting_northing_from_lat_long(51.197065, 1.385194))
+print(geo.get_easting_northing_from_lat_long(51.197065, 1.385194))
 tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
-#tool.get_sorted_annual_flood_risk(['ME157QU', 'TN2 3PA', 'TN173HD', 'CT117DG', 'TN104RU', 'CT1 3LA',
- #                                  'CT1 1SF', 'DA2 6AA', 'TN159AP', 'BR8 7TZ', 'ME174RB',
- #      'ME123GF', 'ME9 0SJ', 'CT1 1AX', 'ME157QN'])
+tool.get_sorted_annual_flood_risk(['ME157QU', 'TN2 3PA', 'TN173HD', 'CT117DG', 'TN104RU', 'CT1 3LA',
+                                   'CT1 1SF', 'DA2 6AA', 'TN159AP', 'BR8 7TZ', 'ME174RB',
+       'ME123GF', 'ME9 0SJ', 'CT1 1AX', 'ME157QN'])
 '''
 def get_annual_flood_risk(postcodes, probability_bands):
     probs = {'Very Low':1/1000, 'Low':1/100, 'Medium': 1/50, 'High':1/10, 'Zero':0}
