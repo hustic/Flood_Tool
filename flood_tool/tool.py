@@ -213,9 +213,9 @@ class Tool(object):
         fp_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
         fp_data.drop_duplicates()
         fp_data.fillna(0, inplace=True)
-        fp_data = fp_data.set_index('Postcode')
-        fp_data = fp_data.reindex(index = a)
-        fp_data = fp_data.reset_index()
+        #fp_data = fp_data.set_index('Postcode')
+        #fp_data = fp_data.reindex(index = a)
+        #fp_data = fp_data.reset_index()
         fp_data['Flood Risk'] = self.get_annual_flood_risk(fp_data.Postcode, self.get_easting_northing_flood_probability(
             self.dfp.loc[fp_data.Postcode, 'Easting'], self.dfp.loc[fp_data.Postcode, 'Northing']))#self.dfp.loc[fp_data.Postcode, 'Probability Band'])
         updated = fp_data.sort_values(by = ['Flood Risk','Postcode'],ascending = (False,True))
