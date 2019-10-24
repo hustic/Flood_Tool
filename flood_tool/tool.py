@@ -88,16 +88,27 @@ class Tool(object):
         numpy.ndarray of strs
             numpy array of flood probability bands corresponding to input locations.
         """
-        res = np.full((len(easting)), 'Zero')
-        for _, row in self.dff.iterrows():
+        #res = np.full((len(easting)), 'Zero')
+        #for _, row in self.dff.iterrows():
             #print(index)
-            dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((easting, northing)).T)
-            points = np.where(dist < row['radius'])
+         #   dist = distance.cdist(np.array([[row['X'], row['Y']]]), np.vstack((easting, northing)).T)
+         #   points = np.where(dist < row['radius'])
 
+          #  if points:
+           #     res[points[1]] = row['prob_4band']
+
+        res = np.full((len(easting)), 'Zero')
+        c = np.vstack((easting, northing)).T
+        def get_probs(row):
+            dist = distance.cdist(np.array([[row[1], row[2]]]), c)
+            points = np.where(dist <= row['radius'])
             if points:
                 res[points[1]] = row['prob_4band']
 
+        #self.dff.apply(get_probs, axis=1)
+
         return res
+
 
 
 
@@ -127,13 +138,15 @@ class Tool(object):
         fp_data = fp_data.set_index('Postcode')
         #fp_data = fp_data.reindex(index = a)
         #fp_data = fp_data.reset_index()
-        replace_data = self.get_easting_northing_flood_probability(self.dfp['Easting'], self.dfp['Northing'])
+        replace_data = self.get_easting_northing_flood_probability(fp_data['Easting'], fp_data['Northing'])
         fp_data['Probability Band'] = replace_data
         fp_data['Probability Band'] = fp_data['Probability Band'].replace(['High', 'Medium', 'Low', 'Very Low', 'Zero'], [4, 3, 2, 1, 0])
         updated = fp_data.sort_values(by = ['Probability Band','Postcode'],ascending = (False,True))
         updated['Probability Band'] = updated['Probability Band'].replace([4, 3, 2, 1, 0], ['High', 'Medium', 'Low', 'Very Low', 'Zero'])
-        updated = updated.set_index('Postcode')
-        return updated['Probability Band']
+        #print(updated['Probability Band'])
+        #updated = updated.set_index('Postcode')
+        final = updated.drop(['Latitude', 'Longitude', 'Total Value', 'Easting', 'Northing'], axis=1)
+        return final
 
 
     def get_flood_cost(self, postcodes):
@@ -212,12 +225,13 @@ class Tool(object):
         a = np.array(postcodes)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].isin (a))]
         fp_data.drop_duplicates()
-        fp_data.fillna(0, inplace=True)
-        #fp_data = fp_data.set_index('Postcode')
+        #fp_data.fillna(0, inplace=True)
+        fp_data = fp_data.set_index('Postcode')
         #fp_data = fp_data.reindex(index = a)
         #fp_data = fp_data.reset_index()
-        fp_data['Flood Risk'] = self.get_annual_flood_risk(fp_data.Postcode, self.get_easting_northing_flood_probability(
-            self.dfp.loc[fp_data.Postcode, 'Easting'], self.dfp.loc[fp_data.Postcode, 'Northing']))#self.dfp.loc[fp_data.Postcode, 'Probability Band'])
+        probs = self.get_easting_northing_flood_probability(fp_data['Easting'], fp_data['Northing'])
+        print(fp_data)
+        fp_data['Flood Risk'] = self.get_annual_flood_risk(fp_data.index, probs)
         updated = fp_data.sort_values(by = ['Flood Risk','Postcode'],ascending = (False,True))
-        updated = updated.set_index('Postcode')
-        return updated['Flood Risk']
+        #updated = updated.set_index('Postcode')
+        return updated
