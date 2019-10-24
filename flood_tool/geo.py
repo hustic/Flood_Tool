@@ -1,6 +1,5 @@
 """Module implementing various geodetic transformation functions."""
-
-from numpy import array, sin, cos, tan, sqrt, pi, arctan2, floor
+from numpy import array, sin, cos, tan, sqrt, pi, arctan2, floor, stack
 
 __all__ = ['get_easting_northing_from_lat_long',
            'WGS84toOSGB36']
