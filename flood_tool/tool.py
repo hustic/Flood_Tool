@@ -143,11 +143,9 @@ class Tool(object):
             data column is named `Probability Band`. Invalid postcodes and duplicates
             are removed.
         """
-        a = np.array(np.unique([s.upper() for s in postcodes]))
-        #a = a.apply(lambda x: x[0:3] + " " + x[3:6] if len(x) == 6 else x)
+        a = np.array(np.unique([s.replace(" ", "").upper() for s in postcodes]))
         #print(a)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].str.replace(" ", "").isin (a))]
-
         #print(fp_data['Postcode'].values)
         fp_data = fp_data.set_index('Postcode')
         #fp_data = fp_data.reindex(index = a)
@@ -248,7 +246,7 @@ class Tool(object):
             `Postcode` and the data column `Flood Risk`.
             Invalid postcodes and duplicates are removed.
         """
-        a = np.array(np.unique([s.replace(" ", "").upper() for s in postcodes]))
+        a = np.array(np.unique([s.replace(" ", "").replace(" ", "").upper() for s in postcodes]))
         #print(a)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].str.replace(" ", "").isin (a))]
         #print(fp_data['Postcode'].values)
