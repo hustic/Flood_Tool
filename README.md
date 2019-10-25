@@ -6,9 +6,16 @@ The Environment Agency routinely collects data on rainfall, sea level and river 
 
 This tool calculates flood probabilities and risks for postcodes in England.
 
+Two additional scripts were added to expand the functionality of the tool using the Rainfall API.
+
 ### Installation Guide
 
-*To be written*
+To install all the required packages, run
+```
+pip install -r requirements.txt
+pip install -e .
+```
+in the base directory.
 
 ### User instructions
 
@@ -24,19 +31,26 @@ The geo functions can be imported as
 from flood_tool import geo
 ```
 
-For all the functions available, check the documentation
+For all the functions available, check the documentation or the docstrings in the scripts.
 
 
 #### Functionality with Rainfall API
 
-In the repository we included two scripts, `step3_api.py` and , that use the Rainfall API to expand the capabilities of our flood_tool. 
+In the repository we included two scripts, `step3_api.py` and `step4_api.py`, that use the Rainfall API to expand the capabilities of our flood_tool. 
 
-`step3_api.py` uses the file `./flood_tool/resources/api_postcodes.csv` to load the postcodes used on the analysis. The file currently contains an example of the format of the postcodes (one line, coma seperated) 
+`step3_api.py` uses the file `./flood_tool/resources/api_postcodes.csv` to load the postcodes used on the analysis. The file currently contains an example of the format of the postcodes (one line, coma seperated).
+
+`step4_api.py`outputs graphs of rainfall in quadrants.
 
 To run `step3_api.py`
 
 ```
 python step3_api.py
+```
+
+To run `step4_api.py`
+```
+python step4_api.py
 ```
 
 ### Documentation
