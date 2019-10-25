@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
-from flood_tool import geo
+import geo
 
 __all__ = ['Tool']
 
@@ -247,25 +247,40 @@ class Tool(object):
             Invalid postcodes and duplicates are removed.
         """
         a = np.array(np.unique([s.replace(" ", "").replace(" ", "").upper() for s in postcodes]))
-        #print(a)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].str.replace(" ", "").isin (a))]
-        #print(fp_data['Postcode'].values)
 
-        #fp_data = fp_data.drop_duplicates()
         fp_data = fp_data.dropna()
-        #fp_data.fillna(0, inplace=True)
         fp_data = fp_data.set_index('Postcode')
-        #fp_data = fp_data.reindex(index = a)
-        #fp_data = fp_data.reset_index()
-        #print(fp_data['Easting'])
-        #print(fp_data['Northing'])
-        print(fp_data['Latitude'])
         probs = self.get_easting_northing_flood_probability(fp_data.loc[:, 'Easting'].to_numpy(), fp_data.loc[:, 'Northing'].to_numpy())
-        #print(probs)
-        fp_data['Flood Risk'] = self.get_annual_flood_risk(fp_data.index, probs)
+        risk = self.get_annual_flood_risk(fp_data.index, probs)
+        fp_data.insert(5, "Flood Risk", risk.to_numpy(), True)
         updated = fp_data.sort_values(by = ['Flood Risk','Postcode'],ascending = (False,True))
+        #print(fp_data)
         #print(updated)
         #updated = updated.set_index('Postcode')
         final = updated.drop(['Latitude', 'Longitude', 'Total Value', 'Easting', 'Northing'], axis=1)
         #print(final)
         return final
+
+'''
+        a = np.array(np.unique([s.replace(" ", "").upper() for s in postcodes]))
+       #print(a)
+        fp_data = self.dfp.loc[(self.dfp['Postcode'].str.replace(" ", "").isin (a))]
+       #build a new dataframe
+        Easting  = fp_data['Easting']
+        Northing = fp_data['Northing']
+        prob_bands = self.get_easting_northing_flood_probability(Easting,Northing)
+        annual_risk = self.get_annual_flood_risk(a, prob_bands)
+        new_one = pd.DataFrame(np.vstack((a, annual_risk)).T)
+       #rename the columns
+        new_one['Postcode'] = a
+        new_one['Flood Risk'] = annual_risk
+       #rebuild the formats of postcodes
+        new_one['Postcode'] = new_one['Postcode'].apply(lambda x: x[0:3] + " " + x[3:6] if len(x) == 6 else x)
+        new_one['Postcode'] = new_one['Postcode'].apply(lambda x: x[0:2] + "  " + x[4:6] if len(x) == 5 else x)
+        updated = new_one.sort_values(by = ['Flood Risk','Postcode'],ascending = (False,True))
+        updated = updated.set_index('Postcode')
+       # updated = updated.dropna(how = 'any',inplace = True)
+        print(updated)
+        return updated.drop([0 ,1], axis=1)
+'''

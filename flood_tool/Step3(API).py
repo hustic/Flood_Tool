@@ -4,6 +4,7 @@ from tool import Tool
 import geo
 from math import sqrt
 import numpy as np
+import csv
 
 '''
 Depending on location (postcode's lattitude and longitude), finds stations in proximity and 
@@ -12,8 +13,14 @@ warning should be issued.
     Input
 
 '''
+
+with open('./resources/api_postcodes.csv', 'r') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        postcodes = row
+
 tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
-lat_long = tool.get_lat_long(['ME160FN', 'CT147DB', 'ME139BY'])# Here we can input any post code 
+lat_long = tool.get_lat_long(postcodes)# Here we can input any post code
 print(lat_long)
 E_N = np.array(geo.get_easting_northing_from_lat_long(lat_long[:, 0], lat_long[:,1]))
 url = 'https://environment.data.gov.uk/flood-monitoring/id/stations?parameter=rainfall'
@@ -57,7 +64,7 @@ for i in range(3):
         station_value = station_data.get('items')[0].get('latestReading').get('value')
         print('Station', station_reference, ':', station_value, 'mm of rain.')
 
-        flood_risk = tool.get_annual_flood_risk(['ME160FN', 'CT147DB', 'ME139BY'], tool.get_easting_northing_flood_probability(E_N[0], E_N[1]))
+        flood_risk = tool.get_annual_flood_risk(postcodes, tool.get_easting_northing_flood_probability(E_N[0], E_N[1]))
         
         risk = flood_risk[i]
         if risk == 'Zero':

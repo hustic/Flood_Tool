@@ -10,7 +10,7 @@ from tool import Tool
 
 tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
 #print(tool.get_easting_northing_flood_probability(np.array([1034531.01663184]), np.array([2122687.48434951])))
-print(tool.get_sorted_flood_probability(['CT155ND', 'CT161JZ', 'CT118JT', 'ME143LH']))
+print(tool.get_sorted_annual_flood_risk(['DA1 5LP']))
 #tool.get_sorted_annual_flood_risk(['ME157QU', 'TN2 3PA', 'TN173HD', 'CT117DG', 'TN104RU', 'CT1 3LA',
  #                                  'CT1 1SF', 'DA2 6AA', 'TN159AP', 'BR8 7TZ', 'ME174RB',
  #      'ME123GF', 'ME9 0SJ', 'CT1 1AX', 'ME157QN'])
