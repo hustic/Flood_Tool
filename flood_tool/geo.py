@@ -197,20 +197,20 @@ def get_easting_northing_from_lat_long(latitude, longitude, radians=False):
     A guide to coordinate systems in Great Britain
     (https://webarchive.nationalarchives.gov.uk/20081023180830/http://www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents/index.html)
     """
-    #if not radians:
-    #    latitude = rad(latitude)
-    #    longitude = rad(longitude)
+    if not radians:
+        latitude = rad(array(latitude))
+        longitude = rad(array(longitude))
 
-    latitude, longitude = WGS84toOSGB36(latitude, longitude, True)
+    latitude, longitude = WGS84toOSGB36(latitude, longitude, radians=True)
    
     nu = (osgb36.a*osgb36.F_0)/sqrt((1 - osgb36.e2*sin(latitude)**2))
     rho = (osgb36.a*osgb36.F_0*(1 - osgb36.e2))/((1 - osgb36.e2*(sin(latitude)**2))**(3/2))
     heta = (nu/rho) - 1
     n = (osgb36.a - osgb36.b)/(osgb36.a + osgb36.b)
-    M = osgb36.b*osgb36.F_0*((1 + n + (5/4)*(n**2) + (5/4)*(n**3))*(latitude - osgb36.phi_0) -
-                            (3*n + 3*(n**2) + (21/8)*(n**3))*sin(latitude - osgb36.phi_0)*cos(latitude + osgb36.phi_0) +
-                            ((15/8)*(n**2) + (15/8)*(n**3))*sin(2*(latitude - osgb36.phi_0))*cos(2*(latitude + osgb36.phi_0)) -
-                            (35/24)*(n**3)*sin(3*(latitude - osgb36.phi_0))*cos(3*(latitude + osgb36.phi_0)))
+    M = osgb36.b*osgb36.F_0*((1 + osgb36.n + (5/4)*(osgb36.n**2) + (5/4)*(osgb36.n**3))*(latitude - osgb36.phi_0) -
+                            (3*osgb36.n + 3*(osgb36.n**2) + (21/8)*(osgb36.n**3))*sin(latitude - osgb36.phi_0)*cos(latitude + osgb36.phi_0) +
+                            ((15/8)*(osgb36.n**2) + (15/8)*(osgb36.n**3))*sin(2*(latitude - osgb36.phi_0))*cos(2*(latitude + osgb36.phi_0)) -
+                            (35/24)*(osgb36.n**3)*sin(3*(latitude - osgb36.phi_0))*cos(3*(latitude + osgb36.phi_0)))
     I = M + osgb36.N_0
     II = (nu/2)*sin(latitude)*cos(latitude)
     III = (nu/24)*sin(latitude)*(cos(latitude)**3) * (5 - tan(latitude)**2 + 9*heta)

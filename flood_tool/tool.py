@@ -102,14 +102,12 @@ class Tool(object):
         res = np.full((len(easting)), 'Zero')
         c = pd.DataFrame(np.vstack((easting, northing)).T)
         c[2] = res
-        print(c)
         probs = {4:'High', 3:'Medium', 2:'Low', 1:'Very Low', 0:'Zero'}
         def get_probs(row):
             dist = distance.cdist(np.vstack((row[0], row[1])).T, np.vstack((self.dff['X'], self.dff['Y'])).T)
             #print(dist)
             #print(self.dff['radius'].size)
             circles = np.where(dist[0] <= self.dff['radius'], self.dff['Numerical Risk'], 0)
-            print(np.max(circles))
             #print(row.index)
             row[2] = probs[np.max(circles)]
             return row
@@ -145,23 +143,26 @@ class Tool(object):
             data column is named `Probability Band`. Invalid postcodes and duplicates
             are removed.
         """
-        a = np.array(np.unique([s.replace(" ", "").upper() for s in postcodes]))
+        a = np.array(np.unique([s.upper() for s in postcodes]))
+        #a = a.apply(lambda x: x[0:3] + " " + x[3:6] if len(x) == 6 else x)
         #print(a)
         fp_data = self.dfp.loc[(self.dfp['Postcode'].str.replace(" ", "").isin (a))]
+
         #print(fp_data['Postcode'].values)
         fp_data = fp_data.set_index('Postcode')
         #fp_data = fp_data.reindex(index = a)
         #fp_data = fp_data.reset_index()
         replace_data = self.get_easting_northing_flood_probability(fp_data['Easting'].to_numpy(), fp_data['Northing'].to_numpy())
         fp_data['Probability Band'] = replace_data
-        print(fp_data['Probability Band'].values)
+        #print(fp_data['Probability Band'].values)
         fp_data['Probability Band'] = fp_data['Probability Band'].replace(['High', 'Medium', 'Low', 'Very Low', 'Zero'], [4, 3, 2, 1, 0])
-        updated = fp_data.sort_values(by = ['Probability Band','Postcode'],ascending = (False,True))
+        updated = fp_data.sort_values(by = ['Probability Band', 'Postcode'],ascending = (False, True))
+        #updated = fp_data.sort_values(by = ['Postcode'], ascending=(True))
         updated['Probability Band'] = updated['Probability Band'].replace([4, 3, 2, 1, 0], ['High', 'Medium', 'Low', 'Very Low', 'Zero'])
         #print(updated['Probability Band'])
         #updated = updated.set_index('Postcode')
         final = updated.drop(['Latitude', 'Longitude', 'Total Value', 'Easting', 'Northing'], axis=1)
-
+        print(final.index)
         return final
 
 
