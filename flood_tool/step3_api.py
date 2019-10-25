@@ -14,14 +14,14 @@ warning should be issued.
 
 '''
 
-with open('./resources/api_postcodes.csv', 'r') as f:
+with open('./flood_tool/resources/api_postcodes.csv', 'r') as f:
     reader = csv.reader(f)
     for row in reader:
         postcodes = row
 
-tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
+tool = Tool('./flood_tool/resources/postcodes.csv', './flood_tool/resources/flood_probability.csv', './flood_tool/resources/property_value.csv')
 lat_long = tool.get_lat_long(postcodes)# Here we can input any post code
-print(lat_long)
+#print(lat_long)
 E_N = np.array(geo.get_easting_northing_from_lat_long(lat_long[:, 0], lat_long[:,1]))
 url = 'https://environment.data.gov.uk/flood-monitoring/id/stations?parameter=rainfall'
 
