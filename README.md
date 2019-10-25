@@ -13,11 +13,31 @@ This tool calculates flood probabilities and risks for postcodes in England.
 ### User instructions
 
 The Tool object can be imported as 
-'''
-from tool import Tool
-'''
 
-To run 
+```
+from flood_tool import Tool
+```
+
+The geo functions can be imported as
+
+```
+from flood_tool import geo
+```
+
+For all the functions available, check the documentation
+
+
+#### Functionality with Rainfall API
+
+In the repository we included two scripts, `step3_api.py` and , that use the Rainfall API to expand the capabilities of our flood_tool. 
+
+`step3_api.py` uses the file `./flood_tool/resources/api_postcodes.csv` to load the postcodes used on the analysis. The file currently contains an example of the format of the postcodes (one line, coma seperated) 
+
+To run `step3_api.py`
+
+```
+python step3_api.py
+```
 
 ### Documentation
 
@@ -43,7 +63,7 @@ The tool includes several tests, which you can use to checki its operation on yo
 
 ```
 python -m pytest flood_tool
-``
+```
 
 The current version also includes a speed scoring algorithm. This can be run with.
 
