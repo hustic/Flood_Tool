@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
-import geo
+from flood_tool import geo
 
 __all__ = ['Tool']
 

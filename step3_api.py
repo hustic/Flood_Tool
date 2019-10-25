@@ -11,8 +11,8 @@ should be issued. Specifically, there is no flood warning when flood risk is equ
 '''
 import requests
 import json
-from tool import Tool
-import geo
+from flood_tool import Tool
+from flood_tool import geo
 from math import sqrt
 import numpy as np
 import csv
@@ -24,7 +24,7 @@ with open('./flood_tool/resources/api_postcodes.csv', 'r') as f:
 
 tool = Tool('./flood_tool/resources/postcodes.csv', './flood_tool/resources/flood_probability.csv', './flood_tool/resources/property_value.csv')
 lat_long = tool.get_lat_long(postcodes)
-print(lat_long)
+
 E_N = np.array(geo.get_easting_northing_from_lat_long(lat_long[:, 0], lat_long[:,1]))
 url = 'https://environment.data.gov.uk/flood-monitoring/id/stations?parameter=rainfall'
 
