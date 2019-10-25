@@ -12,7 +12,12 @@ This tool calculates flood probabilities and risks for postcodes in England.
 
 ### User instructions
 
-*to be written*
+The Tool object can be imported as 
+'''
+from tool import Tool
+'''
+
+To run 
 
 ### Documentation
 
