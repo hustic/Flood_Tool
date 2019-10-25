@@ -1,3 +1,14 @@
+'''
+Depending on location (postcode's lattitude and longitude), finds stations in proximity and 
+extracts rainfall data in mm. Combining to risk bands, determines whether a flood warning 
+should be issued. Specifically, there is no flood warning when flood risk is equal to zero 
+'Yellow Warning, Medium Risk' is issued when flood risk is 'Very Low' and rainfall is greater than 3 mm/15 mins
+'Yellow Warning, Medium Risk' is issued when flood risk is 'Low' and rainfall is greater 2 mm/15mins
+'Yellow Warning, Medium Risk' is issued when flood risk is 'Medium' and rainfall is between 2 and 3 mm/15mins
+'Red Warning, High Risk' is issued when flood risk is 'Medium' and rainfall is greater than 3 mm/15 mins
+'Yellow Warning, Medium Risk' is issued when flood risk is 'High' and rainfall is smaller than 2 mm/15 mins
+'Red Warning, High Risk' is issued when flood risk is 'High' and rainfall is greater than 2 mm/15 mins
+'''
 import requests
 import json
 from tool import Tool
@@ -6,22 +17,14 @@ from math import sqrt
 import numpy as np
 import csv
 
-'''
-Depending on location (postcode's lattitude and longitude), finds stations in proximity and 
-extracts rainfall data in mm. According to risk bands, determines whether a flood
-warning should be issued.
-    Input
-
-'''
-
-with open('./flood_tool/resources/api_postcodes.csv', 'r') as f:
+with open('./resources/api_postcodes.csv', 'r') as f:
     reader = csv.reader(f)
     for row in reader:
         postcodes = row
 
-tool = Tool('./flood_tool/resources/postcodes.csv', './flood_tool/resources/flood_probability.csv', './flood_tool/resources/property_value.csv')
-lat_long = tool.get_lat_long(postcodes)# Here we can input any post code
-#print(lat_long)
+tool = Tool('./resources/postcodes.csv', './resources/flood_probability.csv', './resources/property_value.csv')
+lat_long = tool.get_lat_long(postcodes)
+print(lat_long)
 E_N = np.array(geo.get_easting_northing_from_lat_long(lat_long[:, 0], lat_long[:,1]))
 url = 'https://environment.data.gov.uk/flood-monitoring/id/stations?parameter=rainfall'
 
